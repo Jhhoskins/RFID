@@ -23,70 +23,88 @@
 % 6. Write paper
 
 
-addpath('..\KamRFID\rfidtouch\Matlab_Processing')
+% addpath('..\KamRFID\rfidtouch\Matlab_Processing')
 %% Playing with Kam's code
 clear all
 close all
 clc
 % [OutDist_Phase_mat, OutDist_Dop_mat, MinPhaseOutLength, MinDopOutLength] = KamFunc(filename, ant_num)
-[phase_out, dop_out, phaselength, doplength] = KamFunc('258Pin_2Read.csv', 2);
+[phase_out, dop_out, phaselength, doplength] = KamFunc('123Pin_1.csv', 1);
 
-
-mat1 = dop_out;
-
-figure;
-hold on
-plot(mat1(:,1), 'g')
-%plot(mat1(:,2), 'g')
-plot(mat1(:,3), 'r')
-%plot(mat1(:,4), 'r')
-plot(mat1(:,5), 'b')
-%plot(mat1(:,6), 'b')
-title('Kam Filtered Dop - Antenna 1')
-legend('Tag 2', 'Tag 5', 'Tag 8');
-%legend('Tag 2 Ant 1', 'Tag 2 Ant 2', 'Tag 5 Ant 1', 'Tag 5 Ant 2', 'Tag 8 Ant 1', 'Tag 8 Ant 2');
-hold off
-
-
-figure;
-hold on
-plot(mat1(:,2), 'g')
-%plot(mat1(:,2), 'g')
-plot(mat1(:,4), 'r')
-%plot(mat1(:,4), 'r')
-plot(mat1(:,6), 'b')
-%plot(mat1(:,6), 'b')
-title('Kam Filtered Dop - Antenna 2')
-legend('Tag 2', 'Tag 5', 'Tag 8');
-hold off
+% 
+% mat1 = dop_out;
+% 
+% figure;
+% hold on
+% plot(mat1(:,1), 'g')
+% %plot(mat1(:,2), 'g')
+% plot(mat1(:,3), 'r')
+% %plot(mat1(:,4), 'r')
+% plot(mat1(:,5), 'b')
+% %plot(mat1(:,6), 'b')
+% title('Kam Filtered Dop - Antenna 1')
+% legend('Tag 2', 'Tag 5', 'Tag 8');
+% %legend('Tag 2 Ant 1', 'Tag 2 Ant 2', 'Tag 5 Ant 1', 'Tag 5 Ant 2', 'Tag 8 Ant 1', 'Tag 8 Ant 2');
+% hold off
+% 
+% 
+% figure;
+% hold on
+% plot(mat1(:,2), 'g')
+% %plot(mat1(:,2), 'g')
+% plot(mat1(:,4), 'r')
+% %plot(mat1(:,4), 'r')
+% plot(mat1(:,6), 'b')
+% %plot(mat1(:,6), 'b')
+% title('Kam Filtered Dop - Antenna 2')
+% legend('Tag 2', 'Tag 5', 'Tag 8');
+% hold off
 
 
 mat1 = phase_out;
 
 figure;
 hold on
-plot(mat1(:,1), 'g')
-%plot(mat1(:,2), 'g')
-plot(mat1(:,3), 'r')
+plot(mat1(:,1), 'r')
+plot(mat1(:,2), 'b')
+plot(mat1(:,3), 'g')
 %plot(mat1(:,4), 'r')
-plot(mat1(:,5), 'b')
+% plot(mat1(:,5), 'b')
 %plot(mat1(:,6), 'b')
 title('Pre Filtered Phase - Antenna 1')
-legend('Tag 2', 'Tag 5', 'Tag 8');
+legend('Tag 1', 'Tag 2', 'Tag 3');
 %legend('Tag 2 Ant 1', 'Tag 2 Ant 2', 'Tag 5 Ant 1', 'Tag 5 Ant 2', 'Tag 8 Ant 1', 'Tag 8 Ant 2');
 hold off
 
 figure;
 hold on
-plot(mat1(:,2), 'g')
-%plot(mat1(:,2), 'g')
-plot(mat1(:,4), 'r')
-%plot(mat1(:,4), 'r')
-plot(mat1(:,6), 'b')
-%plot(mat1(:,6), 'b')
-title('Kam Filtered Phase - Antenna 2')
-legend('Tag 2', 'Tag 5', 'Tag 8');
+plot(mat1(:,1), 'r')
+title('Pre Filtered Phase - Tag 1 Antenna 1')
 hold off
+
+figure;
+hold on
+plot(mat1(:,2), 'b')
+title('Pre Filtered Phase - Tag 2 Antenna 1')
+hold off
+
+figure;
+hold on
+plot(mat1(:,3), 'g')
+title('Pre Filtered Phase - Tag 3 Antenna 1')
+hold off
+
+% figure;
+% hold on
+% plot(mat1(:,2), 'g')
+% %plot(mat1(:,2), 'g')
+% plot(mat1(:,4), 'r')
+% %plot(mat1(:,4), 'r')
+% plot(mat1(:,6), 'b')
+% %plot(mat1(:,6), 'b')
+% title('Kam Filtered Phase - Antenna 2')
+% legend('Tag 2', 'Tag 5', 'Tag 8');
+% hold off
 
 %%
 
@@ -97,7 +115,7 @@ hold off
 % phys proximity
 
 %find maxes
-selector = phase_out(:,6);
+selector = phase_out(:,1);
 %find nummax+nummin abs(biggest) components
 nummax=50;
 nummin=50;
@@ -106,12 +124,12 @@ max_mat = [idx_max maxval];
 [minval, idx_min]=mink(selector,nummin);
 min_mat = [idx_min minval];
 tokillidx=find(maxval<(mean(maxval)+std(maxval)));
-max_mat(tokillidx,:)=[];
+% max_mat(tokillidx,:)=[];
 dummy_phase=zeros(length(selector));
 dummy_phase(max_mat(:,1))=max_mat(:,2);
 
 tokillidx_min=find(minval>(mean(minval)-std(minval)));
-min_mat(tokillidx_min,:)=[];
+% min_mat(tokillidx_min,:)=[];
 dummy_phase(min_mat(:,1))=min_mat(:,2);
 
 %dummy_phase(idx_min)=minval;
@@ -123,7 +141,25 @@ figure;
 hold on
 plot(dummy_phase, 'b')
 %plot(dummy_phase, 'b')
-title('Antenna 1 Tag 2');
+title('Antenna 1 Tag 3');
+hold off
+
+
+%% 
+
+out1 = keystrokeExtraction(phase_out, 70, 70, 1);
+out2 = keystrokeExtraction(phase_out, 70, 70, 2);
+out3 = keystrokeExtraction(phase_out, 70, 70, 3);
+figure;
+hold on
+plot(out1, 'r')
+plot(out3, 'g')
+plot(out2, 'b')
+
+legend('Tag 1', 'Tag 2', 'Tag 3');
+%plot(dummy_phase, 'b')
+title('Antenna 1');
+legend('Tag 1', 'Tag 2', 'Tag 3');
 hold off
 
 % tokillidx=find(maxval<(mean(maxval)+std(maxval)));

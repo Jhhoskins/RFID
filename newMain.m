@@ -19,7 +19,7 @@ clear all
 %close all
 clc
 
-file = '../keyPress/test/123Pin_1.csv';
+file = '123Pin_1.csv';
 %file = '../tagTap/test/123Pin_0.csv';
 
 % [OutDist_Phase_mat, OutDist_Dop_mat, MinPhaseOutLength, MinDopOutLength] = KamFunc(filename, ant_num)
@@ -31,21 +31,21 @@ file = '../keyPress/test/123Pin_1.csv';
 
 % error check, lots of values are about x*pi away from line. Fix them
 %subtract pi from values in array
-piVal = 2.5;
-for i = 1:length(phase_out)
-    phaseDiff = phase_out(i,3);
-    %above
-    if (phase_out(i,3) > 2*piVal)
-        phase_out(i,3) = phase_out(i,3) - 2*pi;
-    elseif (phase_out(i,3) > piVal)
-        phase_out(i,3) = phase_out(i,3) - pi;
-    %below
-    elseif (phase_out(i,3) < -2*piVal)
-        phase_out(i,3) = phase_out(i,3) + 2*pi;
-    elseif (phase_out(i,3) < -piVal)
-        phase_out(i,3) = phase_out(i,3) + pi;
-    end
-end
+% piVal = 2.5;
+% for i = 1:length(phase_out)
+%     phaseDiff = phase_out(i,3);
+%     %above
+%     if (phase_out(i,3) > 2*piVal)
+%         phase_out(i,3) = phase_out(i,3) - 2*pi;
+%     elseif (phase_out(i,3) > piVal)
+%         phase_out(i,3) = phase_out(i,3) - pi;
+%     %below
+%     elseif (phase_out(i,3) < -2*piVal)
+%         phase_out(i,3) = phase_out(i,3) + 2*pi;
+%     elseif (phase_out(i,3) < -piVal)
+%         phase_out(i,3) = phase_out(i,3) + pi;
+%     end
+% end
 
 
 
