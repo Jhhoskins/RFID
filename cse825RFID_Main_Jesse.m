@@ -26,7 +26,7 @@
 % addpath('..\KamRFID\rfidtouch\Matlab_Processing')
 %% Playing with Kam's code
 clear all
-close all
+% close all
 clc
 % [OutDist_Phase_mat, OutDist_Dop_mat, MinPhaseOutLength, MinDopOutLength] = KamFunc(filename, ant_num)
 [phase_out, dop_out, phaselength, doplength] = KamFunc('123Pin_1.csv', 1);

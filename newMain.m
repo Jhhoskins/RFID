@@ -28,6 +28,24 @@ file = '123Pin_1.csv';
 %[phase_out1, dop_out, phaselength1, doplength] = KamFunc(file, 1);
 %[phase_out2, phaselength2] = KamFuncTrim(file, 1);
 [phase_out] = DanFunc(file, 1);
+mat1=phase_out;
+figure;
+hold on
+plot(mat1(:,1), 'r')
+title('Pre Filtered Phase - Tag 1 Antenna 1')
+hold off
+
+figure;
+hold on
+plot(mat1(:,2), 'b')
+title('Pre Filtered Phase - Tag 2 Antenna 1')
+hold off
+
+figure;
+hold on
+plot(mat1(:,3), 'g')
+title('Pre Filtered Phase - Tag 3 Antenna 1')
+hold off
 
 % error check, lots of values are about x*pi away from line. Fix them
 %subtract pi from values in array

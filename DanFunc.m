@@ -65,16 +65,76 @@ for AntennaID = 1:ant_num
         Wavelength_vec = Data(:,mapObj('Wavelength'));
         %first order wavelength differential
         WavelengthDiff = diff(Wavelength_vec);
-        Timestamp_1 = Timestamp_vec(WavelengthDiff==0);
-        TimestampsDiff_1 = diff(Timestamp_1)*0.000001; % seconds
+        Timestamps_1 = Timestamp_vec(WavelengthDiff==0);
+        Antenna_vec = Antenna_vec(WavelengthDiff==0);
+        ID_vec=ID_vec(WavelengthDiff==0);
+        TimestampsDiff_1 = diff(Timestamps_1)*0.000001; % seconds
         
         CorrectPhaseAngle_vec = PhaseCorrectorTrim(PhaseAngle_vec, WavelengthDiff,PhaseZeroError,PhaseZeroErrorDelta);
         CorrectPhaseAngle_vec = PhaseCorrectorTrim(flip(CorrectPhaseAngle_vec), flip(WavelengthDiff),PhaseZeroError,PhaseZeroErrorDelta);
+        CorrectPhase2=CorrectPhaseAngle_vec;
+        [PhaseAngle.(['A' num2str(AntennaID) 'T' num2str(TagID)])] = ChannelCorrector(flip(CorrectPhase2),WavelengthDiff,Wavelength_vec);
+        PhaseAngle.(['A' num2str(AntennaID) 'T' num2str(TagID)]) = flip(CorrectPhase2);%CorrectPhase1;%flip(CorrectPhase2);
+        AbsPhase_1 = PhaseAngle.(['A' num2str(AntennaID) 'T' num2str(TagID)]);
+        AbsPhase_1 = diff(AbsPhase_1); % Phase difference
+        AbsPhase_1 = AbsPhase_1((WavelengthDiff==0));
+        AbsPhase_1 = AbsPhase_1((TimestampsDiff_1 < TimeDiffThresh));
+        AbsPhase_1 = PhaseDiffCorrector(AbsPhase_1,PhaseZeroError,ZeroErrorFactor);
+        AP_1 = AbsPhase_1(AbsPhase_1 <= PhaseZeroError & AbsPhase_1 >= -PhaseZeroError);
+        AP_1 = medfilt1(AP_1,MedianFilterWindow(1));
+        AP_1 = conv(AP_1, ones(1,MovingAvgWindow(1))/MovingAvgWindow(1), 'valid');
         
-        SubData = [ID_vec Antenna_vec CorrectPhaseAngle_vec Timestamp_vec];
+        Timestamps_1 = Timestamps_1(AbsPhase_1 <= PhaseZeroError & AbsPhase_1 >= -PhaseZeroError);
+        
+        WavelengthsPruned_1 = Wavelength_vec(AbsPhase_1 <= PhaseZeroError & AbsPhase_1 >= -PhaseZeroError);
+        DistanceMoved_1 = PhaseDistanceMultiplier*0.01*(WavelengthsPruned_1(1:end).*[zeros(MovingAvgWindow(1)-1,1); AP_1])/(2*pi); % meters
+        DistanceMovedPerPhaseChange_1 = DistanceMoved_1;
+        DistanceMoved_1 = filter(1,[1 -1],DistanceMovedPerPhaseChange_1(:));
+        
+  
+      
+        %copy the final phase-output values
+        DistMoved_Out = diff(ConversionConstant*DistanceMoved_1);
+        
+        length(ID_vec)
+        length(Antenna_vec)
+        length(DistMoved_Out)
+        length(Timestamps_1)
+        
+                %% this section trims the phase output vectors to make sure they aren't the max size
+        %store temp copy bc I am not sure how DistMoved_Out is used
+        tempDistMoved_Out = DistMoved_Out;
+        %get the temp candidate for minimum length
+        tempminPhase_out = length(DistMoved_Out);
+        %if this is the first time, I am the shortest, add me
+        if idx==1 && AntennaID==1
+            %this is the shortest (and only), make it the new minimum
+            minPhase_out=tempminPhase_out;
+            OutDist_Phase_mat=tempDistMoved_Out;
+        %if this is the shortest phase vector to come through, trim others
+        %in the matrix and add the current shortest
+        elseif tempminPhase_out<minPhase_out
+            %this is the shortest, make it the new minimum
+            minPhase_out=tempminPhase_out;
+            %delete the last portions of the matrix
+            OutDist_Phase_mat((minPhase_out+1):end,:)=[];
+            %add the latest dist calc to the final matrix
+            OutDist_Phase_mat = [OutDist_Phase_mat tempDistMoved_Out];
+        %if this is not the shortest, trim it to the shortest, add to the
+        %matrix
+        else
+            %trim the temp to the length of the shortest (and size) of
+            %matrix
+            tempDistMoved_Out((minPhase_out+1):end,:)=[];
+            %add the latest dist calc to the final matrix
+            OutDist_Phase_mat = [OutDist_Phase_mat tempDistMoved_Out];
+        end
+        
+%         SubData = [ID_vec Antenna_vec DistMoved_Out Timestamps_1];
+        %SubData = [ID_vec Antenna_vec CorrectPhaseAngle_vec Timestamp_vec];
         
         
-        OutDist_Phase_mat = [OutDist_Phase_mat; SubData];
+%         OutDist_Phase_mat = [OutDist_Phase_mat; SubData];
     end
             
 end
