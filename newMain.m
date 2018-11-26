@@ -19,11 +19,30 @@ clear all
 %close all
 clc
 
-file = '123Pin_2.csv';
+file = 'fullPin_1.csv';
 %call the function to calc radial dist
-[phase_out, time_out] = DanFunc(file, 1);
+[output1] = DanFunc(file, 1);
 %delete last timestamp due to the diff on dist
-time_out(end,:)=[];
+color_arr = [1 0 1; 0 1 1; 1 0 0; 0 1 0; 0 0 1; 0 0 .5; 0.8500 0.3250 0.0980; 0 .5 0];
+plotRFIDTry2(output1, color_arr)
+legend('Tag 1', 'Tag 2', 'Tag 3', 'Tag 4', 'Tag 5' , 'Tag 6', 'Tag 8', 'Tag 9');
+
+
+mat1=phase_out;
+figure;
+hold on
+plot(time_out(:,1), mat1(:,1), 'r')
+plot(time_out(:,2), mat1(:,2), 'b')
+plot(time_out(:,3), mat1(:,3), 'g')
+plot(time_out(:,4), mat1(:,4), 'k')
+plot(time_out(:,5), mat1(:,5), 'c')
+plot(time_out(:,6), mat1(:,6), 'm')
+plot(time_out(:,7), mat1(:,7), 'Color', [0.8500, 0.3250, 0.0980])
+plot(time_out(:,8), mat1(:,8), 'Color', [0, 0.5, 0])
+
+title('Radial Dist - All Tags')
+legend('Tag 1', 'Tag 2', 'Tag 3', 'Tag 4', 'Tag 5' , 'Tag 6', 'Tag 8', 'Tag 9');
+hold off
 
 %% Plot the Radial dist values
 %make a copy to avoid messing with output
@@ -58,9 +77,9 @@ hold off
 
 
 %% Perform keystroke extraction
-out1 = keystrokeExtraction(phase_out, 70, 70, 1);
-out2 = keystrokeExtraction(phase_out, 70, 70, 2);
-out3 = keystrokeExtraction(phase_out, 70, 70, 3);
+out1 = keystrokeExtraction(phase_out, time_out, 70, 70, 1);
+out2 = keystrokeExtraction(phase_out, time_out, 70, 70, 2);
+out3 = keystrokeExtraction(phase_out, time_out, 70, 70, 3);
 figure;
 hold on
 plot(time_out(:,1), out1, 'r')
@@ -70,7 +89,30 @@ legend('Tag 1', 'Tag 2', 'Tag 3');
 title('Antenna 1');
 hold off
 
+%% Tester
+data = phase_out;
+nummax = 70;
+nummin = 70;
+col = 1;
+%find maxes
+selector = data(:,col);
+length(selector)
+%find nummax+nummin abs(biggest) components
+[maxval, idx_max]=maxk(selector,nummax);
+max_mat = [idx_max maxval];
+[minval, idx_min]=mink(selector,nummin);
+min_mat = [idx_min minval];
+tokillidx_max=find(maxval<(mean(maxval)+std(maxval)));
+tokillidx_min=find(minval>(mean(minval)-std(minval)));
+min_mat(tokillidx_min,:)=[];
+max_mat(tokillidx_max,:)=[];
 
+dummy_phase=zeros(length(selector),1);
+dummy_phase(max_mat(:,1))=max_mat(:,2);
+dummy_phase(min_mat(:,1))=min_mat(:,2);
+
+dummy_phase1= dummy_phase(dummy_phase~=0);
+figure; plot(dummy_phase1)
 %% Sidenotes
 %%% plotting phase over time
 % col1 = TagNum, col2 = Value, col3 = Timestamp
