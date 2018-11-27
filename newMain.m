@@ -24,7 +24,7 @@ file = 'fullPin_6.csv';
 [output1] = DanFunc(file, 1);
 %delete last timestamp due to the diff on dist
 color_arr = [1 0 1; 0 1 1; 1 0 0; 0 1 0; 0 0 1; 0 0 .5; 0.8500 0.3250 0.0980; 0 .5 0; 0.5 0 0];
-out_cell = plotRFIDTry2(output1, color_arr)
+out_cell = plotRFIDTry2(output1, color_arr);
 legend('Tag 1', 'Tag 2', 'Tag 3', 'Tag 4', 'Tag 5' , 'Tag 6', 'Tag 7', 'Tag 8', 'Tag 9');
 title('Radial Dist - All Tags')
 hold off
