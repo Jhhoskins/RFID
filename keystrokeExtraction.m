@@ -11,8 +11,8 @@ max_mat = [idx_max maxval];
 min_mat = [idx_min minval];
 tokillidx_max=find(maxval<(mean(maxval)+std(maxval)));
 tokillidx_min=find(minval>(mean(minval)-std(minval)));
-min_mat(tokillidx_min,:)=[]
-max_mat(tokillidx_max,:)=[]
+min_mat(tokillidx_min,:)=[];
+max_mat(tokillidx_max,:)=[];
 
 dummy_phase=zeros(length(selector),1);
 dummy_phase(max_mat(:,1))=max_mat(:,2);

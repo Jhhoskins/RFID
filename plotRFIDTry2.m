@@ -12,7 +12,7 @@ for i=1:2:size
     out_cell{i}(end)=[];
     time = out_cell{i};
     dist = out_cell{i+1};
-    plot(time,dist, 'Color', color_arr(color_count,:))
+    plot(time,dist, 'Color', color_arr(color_count,:));
     color_count = color_count+1;
 end
 

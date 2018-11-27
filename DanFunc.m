@@ -41,34 +41,40 @@ minPhase_out = 0;
 tag_id_arr = unique(tag(:,6));
 length_counter = 1;
 
-
+Timestamp_vec = tag(:,mapObj('Timestamp'));
+init_time=Timestamp_vec(1,1);
+Timestamp_vec=Timestamp_vec-init_time;
+Timestamp_vec_true = Timestamp_vec(:,1)./1000000;
+display('hello')
 %% loop through the number of antennas given
 for AntennaID = 1:ant_num
+    
+     Data = tag(tag(:,mapObj('AntennaID'))==AntennaID,:);
     %% loop through each element of the tag id array (so that each tag gets hit)
     for idx = 1:numel(tag_id_arr)
         %assign actual tag number to the TagID
         TagID=tag_id_arr(idx);
         
         % get only data for current tag and antenna
-        Data = tag(tag(:,mapObj('AntennaID'))==AntennaID,:);
+        Data = tag;
         Data = Data(Data(:,mapObj('TagID'))==TagID,:);
-        
+        Timestamp_vec = Timestamp_vec_true;
         % select only ID, Antenna, Phase, and Timestamp
         ID_vec = Data(:,mapObj('TagID'));
         Antenna_vec = Data(:,mapObj('AntennaID'));
         PhaseAngle_vec = Data(:,mapObj('AbsPhase'));
-        Timestamp_vec = Data(:,mapObj('Timestamp'));
+%         Timestamp_vec = Data(:,mapObj('Timestamp'));
         %123321
         % Convert to seconds since runtime
-        init_time=Timestamp_vec(1,1);
-        Timestamp_vec=Timestamp_vec-init_time;
-        Timestamp_vec = Timestamp_vec(:,1)./1000000;
+%         init_time=Timestamp_vec(1,1);
+%         Timestamp_vec=Timestamp_vec-init_time;
+%         Timestamp_vec = Timestamp_vec(:,1)./1000000;
 
         %get subselect of wavelengths
         Wavelength_vec = Data(:,mapObj('Wavelength'));
         %first order wavelength differential
         WavelengthDiff = diff(Wavelength_vec);
-        Timestamps_1 = Timestamp_vec(WavelengthDiff==0);
+        Timestamps_1 = Timestamp_vec(WavelengthDiff==0)
         Antenna_vec = Antenna_vec(WavelengthDiff==0);
         ID_vec=ID_vec(WavelengthDiff==0);
         TimestampsDiff_1 = diff(Timestamps_1)*0.000001; % seconds
@@ -98,7 +104,8 @@ for AntennaID = 1:ant_num
         TagIDstr_temp=num2str(TagID);
         Dist_str_temp = strcat(dist_str, TagIDstr_temp);
         TagIDstr_temp = strcat(tag_str, TagIDstr_temp);
-        
+        length(Timestamps_1)
+        length(DistMoved_Out)
         out.(TagIDstr_temp) = Timestamps_1;
         out.(Dist_str_temp) = DistMoved_Out;
 %         length(ID_vec);

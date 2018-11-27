@@ -19,15 +19,26 @@ clear all
 close all
 clc
 
-file = 'fullPin_1.csv';
+file = 'fullPin_6.csv';
 %call the function to calc radial dist
 [output1] = DanFunc(file, 1);
 %delete last timestamp due to the diff on dist
-color_arr = [1 0 1; 0 1 1; 1 0 0; 0 1 0; 0 0 1; 0 0 .5; 0.8500 0.3250 0.0980; 0 .5 0];
+color_arr = [1 0 1; 0 1 1; 1 0 0; 0 1 0; 0 0 1; 0 0 .5; 0.8500 0.3250 0.0980; 0 .5 0; 0.5 0 0];
 out_cell = plotRFIDTry2(output1, color_arr)
-legend('Tag 1', 'Tag 2', 'Tag 3', 'Tag 4', 'Tag 5' , 'Tag 6', 'Tag 8', 'Tag 9');
+legend('Tag 1', 'Tag 2', 'Tag 3', 'Tag 4', 'Tag 5' , 'Tag 6', 'Tag 7', 'Tag 8', 'Tag 9');
 title('Radial Dist - All Tags')
 hold off
+
+size=length(out_cell);
+color_count=1;
+for i=1:2:size
+
+    % delete the last time value for each part
+    time = out_cell{i};
+    dist = out_cell{i+1};
+    figure;hold on; plot(time,dist, 'Color', color_arr(color_count,:)); title(['TagID: ', num2str(color_count)]);hold off;
+    color_count = color_count+1;
+end
 
 % %% Plot the Radial dist values
 % %make a copy to avoid messing with output
@@ -81,7 +92,7 @@ for i=1:2:size
     color_count = color_count+1;
 end
 title('Cleaned up All Tags');
-legend('Tag 1', 'Tag 2', 'Tag 3', 'Tag 4', 'Tag 5' , 'Tag 6', 'Tag 8', 'Tag 9');
+legend('Tag 1', 'Tag 2', 'Tag 3', 'Tag 4', 'Tag 5' , 'Tag 6', 'Tag 7', 'Tag 8', 'Tag 9');
 hold off;
 
 % %% Tester
