@@ -3,9 +3,9 @@
 % Main Script
 
 % To do
-% 1. Figure out our own (or understand Kamran's) preprocessing module(?)
-% 2. Take a multi chip dataset (known chip location)
-% 3. Take full test dataset
+% % 1. Figure out our own (or understand Kamran's) preprocessing module(?)
+% % 2. Take a multi chip dataset (known chip location)
+% % 3. Take full test dataset
 % 4. Manual analysis
 %   A. Visual
 %   B. Data mining techniques (PCA, modeling/SVM)
@@ -19,64 +19,55 @@ clear all
 close all
 clc
 
-file = 'fullPin_6.csv';
+file = 'singleChip1.csv';
 %call the function to calc radial dist
 [output1] = DanFunc(file, 1);
 %delete last timestamp due to the diff on dist
-color_arr = [1 0 1; 0 1 1; 1 0 0; 0 1 0; 0 0 1; 0 0 .5; 0.8500 0.3250 0.0980; 0 .5 0; 0.5 0 0];
+color_arr = [1 0 1; 0 1 1; 1 0 0; 0 1 0; 0 0 1; 0 0 .5; 0 .5 0; 0.5 0 0];
 out_cell = plotRFIDTry2(output1, color_arr);
-legend('Tag 1', 'Tag 2', 'Tag 3', 'Tag 4', 'Tag 5' , 'Tag 6', 'Tag 7', 'Tag 8', 'Tag 9');
-title('Radial Dist - All Tags')
+file(end-3:end)=[];
+% 258 Tag Legend
+% legend('Tag 2', 'Tag 5', 'Tag 8', 'Location', 'northeastoutside');
+% 123 Tag Legend
+% legend('Tag 1', 'Tag 2', 'Tag 3', 'Location', 'northeastoutside');
+% 8 tag legend
+%legend('Tag 1', 'Tag 2', 'Tag 3', 'Tag 4', 'Tag 5' , 'Tag 6', 'Tag 8', 'Tag 9', 'Location', 'northeastoutside');
+% 9 tag legend
+%legend('Tag 1', 'Tag 2', 'Tag 3', 'Tag 4', 'Tag 5' , 'Tag 6', 'Tag 7', 'Tag 8', 'Tag 9', 'Location', 'northeastoutside');
+%title('Radial Dist - All Tags')
+xlabel('Time (seconds)')
+ylabel('Distance Change');
+tempFile=strcat('FinalTotal', file);
+print(tempFile, '-djpeg');
 hold off
 
 size=length(out_cell);
 color_count=1;
+
+windowSize = 50; 
+b = (1/windowSize)*ones(1,windowSize);
+a = 1;
+
 for i=1:2:size
 
     % delete the last time value for each part
     time = out_cell{i};
     dist = out_cell{i+1};
-    figure;hold on; plot(time,dist, 'Color', color_arr(color_count,:)); title(['TagID: ', num2str(color_count)]);hold off;
+    filetemp=strcat('Final', file, 'TagID', num2str(color_count));
+    figure;
+    hold on; 
+    plot(time,dist, 'Color', color_arr(color_count,:)); 
+    %title(['TagID: ', num2str(color_count)]); 
+    xlabel('Time (seconds)'); 
+    ylabel('Distance Change'); 
+    hold off;
+    
+    print(filetemp, '-djpeg');
     color_count = color_count+1;
 end
 
-% %% Plot the Radial dist values
-% %make a copy to avoid messing with output
-% mat1=phase_out;
-% figure;
-% hold on
-% plot(time_out(:,1), mat1(:,1), 'r')
-% title('Radial Dist - Tag 1')
-% hold off
-% 
-% figure;
-% hold on
-% plot(time_out(:,2), mat1(:,2), 'b')
-% title('Radial Dist - Tag 2')
-% hold off
-% 
-% figure;
-% hold on
-% plot(time_out(:,3), mat1(:,3), 'g')
-% title('Radial Dist - Tag 3')
-% hold off
-% 
-% 
-% figure;
-% hold on
-% plot(time_out(:,1), mat1(:,1), 'r')
-% plot(time_out(:,2), mat1(:,2), 'b')
-% plot(time_out(:,3), mat1(:,3), 'g')
-% title('Radial Dist - All Tags')
-% legend('Tag 1', 'Tag 2', 'Tag 3');
-% hold off
-% 
 
 %% Perform keystroke extraction
-% out1 = keystrokeExtraction(out_cell{2}, out_cell{1}, 70, 70, 1);
-% out2 = keystrokeExtraction(phase_out, time_out, 70, 70, 2);
-% out3 = keystrokeExtraction(phase_out, time_out, 70, 70, 3);
-
 nummax=70;
 nummin=70;
 size=length(out_cell);
@@ -91,9 +82,13 @@ for i=1:2:size
     plot(time,out1, 'Color', color_arr(color_count,:))
     color_count = color_count+1;
 end
-title('Cleaned up All Tags');
-legend('Tag 1', 'Tag 2', 'Tag 3', 'Tag 4', 'Tag 5' , 'Tag 6', 'Tag 7', 'Tag 8', 'Tag 9');
+%title('All Tags - Expected Keystrokes');
+% legend('Tag 2', 'Tag 5', 'Tag 8', 'Location', 'northeastoutside');
+xlabel('Time (seconds)')
+ylabel('Distance Change');
 hold off;
+filetemp=strcat('Final', file, 'Keystroke');
+print(filetemp, '-djpeg');
 
 % %% Tester
 % data = phase_out;

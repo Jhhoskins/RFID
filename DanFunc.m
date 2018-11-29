@@ -8,6 +8,7 @@ function [out] = DanFunc(filename, ant_num)
 out=struct;
 dist_str = 'Dist';
 tag_str = 'Time';
+ant_str = 'Ant';
 tag = load(filename);
 
 save(['Exp' num2str(1) '.mat'],'tag')
@@ -97,9 +98,11 @@ for AntennaID = 1:ant_num
 
         %copy the final phase-output values
         DistMoved_Out = diff(ConversionConstant*DistanceMoved_1);
+        %DistMoved_Out = (ConversionConstant*DistanceMoved_1);
         TagIDstr_temp=num2str(TagID);
-        Dist_str_temp = strcat(dist_str, TagIDstr_temp);
-        TagIDstr_temp = strcat(tag_str, TagIDstr_temp);
+        AntennaIDstr_temp=num2str(AntennaID);
+        Dist_str_temp = strcat(ant_str, AntennaIDstr_temp, dist_str, TagIDstr_temp);
+        TagIDstr_temp = strcat(ant_str, AntennaIDstr_temp, tag_str, TagIDstr_temp);
         out.(TagIDstr_temp) = Timestamps_1;
         out.(Dist_str_temp) = DistMoved_Out;
 
